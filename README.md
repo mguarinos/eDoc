@@ -28,7 +28,7 @@ http://front.guarinos.xyz:3000/
 
 PARA INSTALACIÓN Y ARRANQUE DEL SERVICIO :
 
-FRONT-END : Moverse en la carpeta de frontend/front-end y con un terminal ejecutar los comandos "yarn install" y "yarn start"
+FRONT-END : Moverse en la carpeta de frontend/front-end y con un terminal ejecutar los comandos "yarn install" y "yarn start" (el servicio se ejecuto en puerto 3000)
 
 BACK-END : Moverse en la carpeta de backend y con un terminal ejecutar el comando "mvn spring-boot:run"
 
