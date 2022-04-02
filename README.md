@@ -6,7 +6,8 @@ tendrán la posibilidad de responder a distintas cuestiones para evaluar la labo
 profesor, a la vez que todos los usuarios podrán ver resultados agregados con distinto nivel
 de detalle.
 
-Funcionalidad del servicio
+Funcionalidad del servicio.
+
 La evaluación de la actividad docente de los profesores universitarios es un elemento
 fundamental en los procesos de mejora de calidad de Escuelas y Facultades. Hasta fechas
 recientes, esta tarea se realizaba en papel con el consiguiente impacto medioambiental, y la
@@ -20,7 +21,8 @@ alumno en diversos parámetros, a la vez que ofrece a los profesores los resulta
 individualizados de su docencia. Además, permitirá la publicación en abierto de
 información agregada, protegiendo la privacidad tanto de alumnos como de profesores.
 
-Propuesta de realización
+Propuesta de realización.
+
 La realización de este caso de estudio requiere completar los requisitos de la aplicación,
 prestando especial atención a los requisitos de privacidad.
 El desarrollo de este caso implica el desarrollo de varios servicios o componentes: interfaces
