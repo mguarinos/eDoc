@@ -44,6 +44,7 @@ Enlace para acceder a la aplicación web:
 http://front.guarinos.xyz:3000/ 
 
 PARA INSTALACIÓN Y ARRANQUE DEL SERVICIO :
-FRONT-END : Moverse en la carpeta de front-end/
+
+FRONT-END : Moverse en la carpeta de frontend/front-end y con un terminal escribir los comandos "yarn install" y "yarn start"
 front:yarn install, yarn start (sobre la carpeta frontend) back:mvn spring-boot:run
 
