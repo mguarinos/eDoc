@@ -38,3 +38,12 @@ La aplicación que se plantea es un sistema con requisitos básicos de seguridad
 autenticación, autorización, confidencialidad, donde el elemento más importante es la
 privacidad, ya que la información recogida por el sistema (tanto la emitida por el alumno
 como la recibida por el profesor) es de tipo personal y sensible.
+
+Enlace para acceder a la aplicación web:
+
+http://front.guarinos.xyz:3000/ 
+
+PARA INSTALACIÓN Y ARRANQUE DEL SERVICIO :
+FRONT-END : Moverse en la carpeta de front-end/
+front:yarn install, yarn start (sobre la carpeta frontend) back:mvn spring-boot:run
+
