@@ -6,7 +6,8 @@ export const types = {
 	HOMESCREENNAV: 'NAVIGATEHOMESCREENCOMPONENT',
 	LOGIN: 'LOGIN',
 	LOGOUT: 'LOGOUT',
-	ACCOUNT: 'ACCOUNT'
+	ACCOUNT: 'ACCOUNT',
+	MANAGESTATE: 'MANAGESTATE'
 };
 
 export const loginComponents = {
@@ -39,6 +40,10 @@ export const reducer = (p_state, p_action) => {
 		case types.LOGOUT:
 			l_retval['isLogged'] = false;
 			break;
+		case types.MANAGESTATE:
+			l_retval['manageState'] = p_action.manageState;
+			// console.log(p_action.manageState)
+			break;
 		default:
 			// do nothing
 	}
@@ -50,7 +55,8 @@ export const initialState = {
 	JWT: '',
 	activeLoginComponent: loginComponents.LOGIN,
 	isLogged: false,
-	account: {}
+	account: {},
+	manageState: false,
 };
 
 

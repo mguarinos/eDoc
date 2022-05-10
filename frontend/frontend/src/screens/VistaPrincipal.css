@@ -71,6 +71,8 @@ body {
 }
 .botonesEncuestas1{
     display: none;
+    justify-content: center;
+    align-items: center;
 }
 .appbar{
     background-color: #CE8608;
@@ -92,7 +94,7 @@ body {
 
 }
 .asignaturas-preguntas{
-    width:56rem;
+    width:45rem;
     padding:20px;
 
 }
@@ -145,4 +147,24 @@ body {
 
 .header-content.row{
     margin-top: -4rem;
+}
+.modal-admin{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.modal-admin1{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+.form-option{
+    margin-top:1.3rem;
+}
+
+.botonesEncuestas2{
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -1,3 +1,8 @@
+
+import VistaAdmin from './VistaAdmin.jsx';
+import VistaUser from './VistaUser.jsx';
+import VistaTeacher from './VistaTeacher.jsx';
+
 import { connect } from 'react-redux';
 import config from '../common-logic/config.js';
 import React from 'react';
@@ -31,12 +36,22 @@ import BookIcon from '@material-ui/icons/Book';
 import PropTypes from 'prop-types';
 import StepRangeSlider from 'react-step-range-slider';
 import { types } from '../common-logic/redux-store.js';
- 
- 
- 
- 
- 
- 
+import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+// import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+
+
+
+
+
 function mapDispatchToProps(dispatch) {
     return ({
         makered: () => { dispatch({ type: types.HOMESCREENRED }) },
@@ -65,7 +80,7 @@ function mapDispatchToProps(dispatch) {
         },
     })
 };
- 
+
 function mapStateToProps(state) {
     return ({
         JWT: state.JWT,
@@ -74,20 +89,32 @@ function mapStateToProps(state) {
         ...state
     });
 };
- 
- 
- 
- 
- 
- 
- 
+
+
+function rand() {
+  return Math.round(Math.random() * 20) - 10;
+}
+
+
+function getModalStyle() {
+  const top = 50 /*+ rand();*/
+  const left = 50 /*+ rand();*/
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+
 const drawerWidth = 0;
 const styles = theme => ({
     slider: {
         padding: '22px 0px',
         width: '300px',
     },
- 
+
     appBar: {
         [theme.breakpoints.up('sm')]: {
             width: `calc(100%px)`,
@@ -96,7 +123,7 @@ const styles = theme => ({
     drawerPaper: {
         width: drawerWidth,
     },
- 
+
     button: {
         margin: theme.spacing.unit,
     },
@@ -106,18 +133,26 @@ const styles = theme => ({
     fullList: {
         width: 'auto',
     },
+    paper: {
+      position: 'absolute',
+      width: theme.spacing.unit * 50,
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing.unit * 4,
+      outline: 'none',
+    },
 });
- 
+
 const range = [
     { value: 0, step: 1 },
     { value: 10, step: 10 }
- 
+
 ]
- 
- 
- 
+
+
+
 class VistaPrincipal extends React.Component {
- 
+
     constructor(props) {
         super(props);
         this.state = {
@@ -133,31 +168,70 @@ class VistaPrincipal extends React.Component {
             bottom: false,
             right: false,
             value: 30,
+            open: false,
+            open_2: false,
+            dense: "asignatura-prueba-15",
+            currentSubject: -1,
+            difference: [],
+            intersection: [],
+            type: 'Text'
         };
- 
+
     };
- 
+
     handleChange = panel => (event, expanded) => {
         this.setState({
             expanded: expanded ? panel : false,
         });
     };
- 
-        handleSliderChange = (value, event, questionId) => {
+
+    handleChange_2 = name => event => {
+      this.setState({ [name]: event.target.value });
+    };
+
+    // handleCheckboxChange = name => event => {
+    //   this.setState({ [name]: event.target.value });
+    //   console.log(this.state)
+    // };
+
+    handleEnroll = (userId) => {
+      // this.setState({ [name]: event.target.value });
+      // console.log(this.state)
+      let l_method = "POST";
+      let l_uri = config.mainServerBaseURL + "/users/enroll/" + this.state.currentSubject + "/" + userId + "/";
+      let l_extra_headers = { 'Authorization': 'Bearer ' + this.props.JWT, };
+      let l_body = {};
+      let l_fnc = ((p_resp) => {
+        this.handleOpen_enroll()
+      })
+      fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc)
+
+
+  // });
+    // alert("Asignatura añadida correctamente")
+
+    };
+
+
+
+
+
+    handleSliderChange = (value, event, questionId) => {
         let field = "pregunta-" + questionId
- 
+
         this.setState({
             [field]: value,
-        })
+          })
     }
- 
+
     handleDrawerToggle = () => {
         this.setState(state => ({ mobileOpen: !state.mobileOpen }));
     };
- 
+
     handleSubjectClicked = (id) => {
         let token = this.props.JWT
         let role = this.props.account.role
+        this.setState({currentSubject:id})
         this.getQuestions(id, token, role)
         document.getElementById("header1").style.display = "none";
         document.getElementById("botonesEncuestas").style.display = "block";
@@ -165,27 +239,24 @@ class VistaPrincipal extends React.Component {
         document.getElementById("preguntas").style.display = "block";
         var z = document.getElementById("input");
         for (var i = 1; i <= this.state.questions.length + 1; i++) {
-            var xxxx = "input" + (i);
-            z = document.getElementById(xxxx);
+            var aux= "input" + (id);
+            z = document.getElementById(aux);
             if (z) {
                 z.value = ""
             }
         }
-        this.setState ({
-            answer : []
-        })
 
 		Object.entries(this.state).forEach(([key, value]) => {
             if (!key.includes("pregunta-"))
                 return
 
 			this.setState({[key]: undefined})
- 
-        });	 
+
+        });
 
 
     };
- 
+
     handleDeleteClicked = () => {
         var z = document.getElementById("input");
         for (var i = 1; i <= this.state.questions.length + 1; i++) {
@@ -204,17 +275,17 @@ class VistaPrincipal extends React.Component {
                 return
 
 			this.setState({[key]: undefined})
- 
-        });	 
+
+        });
 
     }
- 
+
     handleInputChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
         })
     }
- 
+
     handleHomeClicked = () => {
         var x = document.getElementById("header1");
         if (x != null && x.style.display === "none" && this.state.questions !== []) {
@@ -227,69 +298,211 @@ class VistaPrincipal extends React.Component {
             y.style.display = "none";
         }
     };
- 
- 
+
+
     handleSubmitQuestions = () => {
         Object.entries(this.state).forEach(([key, value]) => {
             if (!key.includes("pregunta-") || value === undefined)
                 return
-			
+
             let l_method = "POST";
             let l_uri = config.mainServerBaseURL + "/answer/" + key.split("pregunta-").pop();
             let l_extra_headers = { 'Authorization': 'Bearer ' + this.props.JWT, };
             let l_body = { answer: value };
             let l_fnc = ((p_resp) => {
                 if (p_resp) {
-                    
+
                 }
- 
-            }) 
+
+            })
             fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc)
         });
         alert("Preguntas guardadas correctamente")
+
+        this.handleHomeClicked();
     }
- 
+
+    handleNewQuestion = () => {
+      console.log(this.state)
+        // Object.entries(this.state).forEach(([key, value]) => {
+        //     if (!key.includes("pregunta-") || value === undefined)
+        //         return
+        //
+            let l_method = "POST";
+            let l_uri = config.mainServerBaseURL + "/questions/" + this.state.currentSubject;
+            let l_extra_headers = { 'Authorization': 'Bearer ' + this.props.JWT, };
+            let l_body = { title: this.state.dense_2, type: this.state.type };
+            let l_fnc = ((p_resp) => {
+                if (p_resp) {
+                  // alert("Pregunta guardada correctamente")
+                  this.getQuestions(this.state.currentSubject, this.props.JWT, "XXXXXXXX")
+                }
+
+            })
+            fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc)
+
+            this.setState({open_2: false})
+        // });
+
+    }
+
+    handleSubmitSubject = () => {
+        // Object.entries(this.state).forEach(([key, value]) => {
+            // if (!key.includes("pregunta-") || value === undefined)
+                // return
+
+            let l_method = "POST";
+            let l_uri = config.mainServerBaseURL + "/subjects/";
+            let l_extra_headers = { 'Authorization': 'Bearer ' + this.props.JWT, };
+            let l_body = { title : this.state.dense };
+            let l_fnc = ((p_resp) => {
+                if (p_resp) {
+                  let l_method_2 = "POST";
+                  let l_uri_2 = config.mainServerBaseURL + "/users/enroll/" + p_resp.id + "/" + this.props.account.id + "/";
+                  let l_extra_headers_2 = { 'Authorization': 'Bearer ' + this.props.JWT, };
+                  let l_body_2 = {};
+                  let l_fnc_2 = ((p_resp_2) => {
+                      if (p_resp_2) {
+                        this.getSubjects(this.props.JWT)
+                      }
+                  })
+                  fetch_data_v2(l_method_2, l_uri_2, l_extra_headers_2, l_body_2, l_fnc_2)
+                }
+            })
+            fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc)
+
+
+        // });
+        alert("Asignatura añadida correctamente")
+    }
+
     handleClickRightMenu(event) {
         this.setState({ anchorElRightMenu: event.currentTarget });
     };
- 
- 
- 
+
+
+
     getSubjects = (token) => {
         let l_method = "GET";
         let l_uri = config.mainServerBaseURL + "/subjects/"
         let l_extra_headers = { 'Authorization': 'Bearer ' + nvl(token, "xx") };
         let l_body = {};
- 
+
         let l_fnc = ((p_resp) => {
             if (p_resp) {
                 this.setState({ subjects: p_resp })
             }
         })
- 
+
         fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc);
     }
- 
+
     getQuestions = (id, token, role) => {
         let l_method = "GET";
         let l_uri = config.mainServerBaseURL + "/questions/" + id;
         let l_extra_headers = { 'Authorization': 'Bearer ' + nvl(token, "xx") };
         let l_body = {};
- 
+
         let l_fnc = ((p_resp) => {
             if (p_resp) {
                 this.setState({ questions: p_resp })
             }
         })
- 
+
         fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc);
     }
- 
- 
+
+    handleOpen = () => {
+      this.setState({ open: true });
+    };
+
+    handleOpen_2 = () => {
+      this.setState({ open_2: true });
+    };
+
+    handleOpen_enroll = () => {
+      this.setState({ open_enroll: true });
+
+      //get all students
+      let token = this.props.JWT
+
+      let l_method = "GET";
+      let l_uri = config.mainServerBaseURL + "/users/all";
+      let l_extra_headers = { 'Authorization': 'Bearer ' + nvl(token, "xx") };
+      let l_body = {};
+
+      let l_fnc = ((p_resp) => {
+          if (p_resp) {
+
+            let l_method_2 = "GET";
+            let l_uri_2 = config.mainServerBaseURL + "/users/enrolled/" + this.state.currentSubject;
+            let l_extra_headers_2 = { 'Authorization': 'Bearer ' + nvl(token, "xx") };
+            let l_body_2 = {};
+
+            let l_fnc_2 = ((p_resp_2) => {
+                if (p_resp_2) {
+
+                  console.log("P_RESP = ", p_resp)
+                  console.log("P_RESP=2", p_resp_2)
+
+                  // let difference = p_resp.filter(x => !p_resp_2.includes(x));
+                  // let intersection = p_resp.filter(x => p_resp_2.includes(x));
+
+                  let difference = p_resp_2.filter(x =>
+                    p_resp.some(y => x.id === y.id)
+                  );
+
+                  let intersection = p_resp.filter(x =>
+                    !p_resp_2.some(y => x.id === y.id)
+                  );
+
+
+
+                  console.log(difference)
+                  console.log(intersection)
+
+                  this.setState({
+                    difference: difference,
+                    intersection: intersection
+                  })
+
+                }
+            })
+
+            fetch_data_v2(l_method_2, l_uri_2, l_extra_headers_2, l_body_2, l_fnc_2);
+
+          }
+      })
+
+      fetch_data_v2(l_method, l_uri, l_extra_headers, l_body, l_fnc);
+
+      //get enrolled students
+
+      //difference
+    };
+
+    handleClose = () => {
+      this.setState({ open: false });
+    };
+
+    handleClose_2 = () => {
+      this.setState({ open_2: false });
+    };
+
+    handleClose_enroll = () => {
+      this.setState({ open_enroll: false });
+    };
+
+
+    handleSubjectChange = name => event => {
+      this.setState({ [name]: event.target.value });
+    };
+
+
     async componentDidMount() {
         await this.getSubjects(this.props.JWT)
     }
- 
+
     renderSwitch(question) {
         const { classes } = this.props;
         const { value } = this.state;
@@ -309,7 +522,7 @@ class VistaPrincipal extends React.Component {
                         />
                     </div>
                 )
- 
+
             case 'Slide':
                 return (
                     <div className={classes.root}>
@@ -326,22 +539,82 @@ class VistaPrincipal extends React.Component {
                 )
             default:
                 return "ERROR, TIPO NO DEFINIDO";
- 
+
         }
     }
- 
+
     toggleDrawer = (side, open) => () => {
         this.setState({
             [side]: open,
         });
     };
- 
- 
+
+
     render() {
- 
+        // ESTABLECER ROL
+        let role;
+        if (this.props.account.roles) {
+          this.props.account.roles.forEach((item, i) => {
+            if (item.name === "ADMIN")
+              role = "ADMIN"
+            if (item.name === "TEACHER" && role !== "ADMIN")
+              role = "TEACHER"
+            if (item.name === "USER" && role !== "ADMIN" && role !== "TEACHER")
+              role = "USER"
+          });
+        }
         const { classes } = this.props;
         const { expanded } = this.state;
- 
+
+        let add_subject_button = role === "ADMIN" ?
+          // <div><ListItem button key="admin" onClick={
+          //     // this.handleSubjectClicked(subject.id);
+          //     // document.getElementById("tituloBarra").innerHTML = subject.title;
+          //     this.handleOpen
+          // }>
+          //     <ListItemIcon><BookIcon /></ListItemIcon>
+          //     <ListItemText primary="Añadir asignatura" />
+          //   </ListItem>
+
+            <div>
+              <Button onClick={this.handleOpen}>Añadir asignatura</Button>
+              <Modal
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                open={this.state.open}
+                onClose={this.handleClose}
+              >
+                <div style={getModalStyle()} className={classes.paper}>
+                    <div class="modal-admin">
+                  <Typography variant="h6" id="modal-title">
+                    Añadir asignatura
+                  </Typography>
+
+                  <TextField
+                    id="add-subject"
+                    // className={classNames(classes.textField, classes.dense)}
+                    onChange={this.handleSubjectChange('dense')}
+                    margin="dense"
+                  />
+                  <Button variant="contained" color="primary" className={classes.button} onClick={this.handleSubmitSubject} size="large">
+                      Añadir
+                      <CloudUploadIcon className={classes.rightIcon} />
+                  </Button>
+                </div>
+                </div>
+              </Modal>
+            </div> : undefined
+
+
+        // const admin = (
+
+
+
+          // )
+
+
+        // )
+
         const subjects = (
             <div>
                 <div className={classes.toolbar} />
@@ -360,36 +633,34 @@ class VistaPrincipal extends React.Component {
                     ))}
                 </List>
                 <Divider />
- 
+
             </div>
         );
- 
+
         let questions = []
+
+        if (role === "USER") {
         questions =
             this.state.questions.map((question, index) => (
                 <div class="preguntas-alumno">
-                    <ExpansionPanel key={index} expanded={expanded === 'panel' + index} onChange={this.handleChange('panel' + index)}>
- 
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <div class="box-alumno">
-                                <Typography class="question-title" className={classes.heading}>{question.title}</Typography>
-                            </div>
-                        </ExpansionPanelSummary>
- 
-                        <ExpansionPanelDetails>
-                            <Typography>
-                                {this.renderSwitch(question)}
-                            </Typography>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                  <ExpansionPanel key={index} expanded={expanded === 'panel' + index} onChange={this.handleChange('panel' + index)}>
+                      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                          <div class="box-alumno">
+                              <Typography class="question-title" className={classes.heading}>{question.title}</Typography>
+                          </div>
+                      </ExpansionPanelSummary>
+
+                      <ExpansionPanelDetails>
+                          <Typography>
+                              {this.renderSwitch(question)}
+                          </Typography>
+                      </ExpansionPanelDetails>
+                  </ExpansionPanel>
                 </div>
-            ))
- 
- 
- 
- 
-        // Futura implementation =================================================
-        if (this.props.account.role === "Admin" || this.props.account.role === "Teacher") {
+              ))
+            }
+
+        if (role === "ADMIN" || role === "TEACHER") {
             questions =
                 this.state.questions.map((question, index) => {
                     let common;
@@ -406,30 +677,58 @@ class VistaPrincipal extends React.Component {
                         { calificacion: 9, total: 0 },
                         { calificacion: 10, total: 0 },
                     ];
- 
- 
- 
+
                     if (question.type === "Text") {
                         let texts = question.answers.map((answer, i) =>
                             <ListItem>
                                 <ListItemText primary={answer.answer} />
                             </ListItem>
                         )
- 
+
                         common = <List>{texts}</List>
                     }
- 
- 
+
+
                     if (question.type === "Slide") {
- 
+
                         question.answers.forEach((answer, i) => {
                             data[answer.answer].total = data[answer.answer].total ? data[answer.answer].total + 1 : 1;
                         });
-                        common = data.map(function (item) {
-                            return `LA CALIFICACION ${item['calificacion']} TIENE UN TOTAL DE ${item['total']} RESPUESTAS</br>`;
-                        }).toString();
+
+                        console.log(data)
+
+                        let sum = 0, count = 0;
+
+                        data.forEach((item, i) => {
+                          console.log(typeof(item.calificacion))
+                          sum += item.calificacion * item.total
+                        });
+
+                        console.log(sum)
+
+                        data.forEach((item, i) => {
+                          count += item.total
+                        });
+
+                        console.log(count)
+
+                        let average = (sum/count).toFixed(2)
+
+
+
+
+                        // let suma = (data.reduce((a,b) => a.calificacion * a.total + b.calificacion * b.total, 0) / data.length)
+                        // console.log(suma)
+                        // let average = (suma / (data.reduce((a,b) => a.total + b.total, 0))).toFixed(2)
+
+
+                        common = `La calificación media de la pregunta es de ${average}.`
+
+                        // common = data.map(function (item) {
+                        //     return `LA CALIFICACION ${item['calificacion']} TIENE UN TOTAL DE ${item['total']} RESPUESTAS</br>`;
+                        // }).toString();
                     }
- 
+
                     return (
                         <div class="preguntas-alumno">
                             <ExpansionPanel key={index} expanded={expanded === 'panel' + index} onChange={this.handleChange('panel' + index)}>
@@ -437,7 +736,7 @@ class VistaPrincipal extends React.Component {
                                     <div class="box-alumno">
                                         <Typography class="question-title" className={classes.heading}>{question.title}</Typography>
                                     </div>
- 
+
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     {common}
@@ -448,31 +747,162 @@ class VistaPrincipal extends React.Component {
                 }
                 )
         }
-        // Futura implementation =================================================
- 
- 
- 
-        const cancelButton =
-            <Button variant="contained" color="secondary" className={classes.button} onClick={this.handleDeleteClicked} size="large">
-                Borrar
-                <DeleteIcon className={classes.rightIcon} />
+
+
+
+
+
+
+
+        const addQuestionButton = role === "ADMIN" ?
+        <div>
+          <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.open_2}
+            onClose={this.handleClose_2}
+          >
+            <div style={getModalStyle()} className={classes.paper}>
+            <div class="modal-admin1">
+              <Typography variant="h6" id="modal-title">
+                Añadir pregunta
+              </Typography>
+
+              <TextField
+                id="add-subject"
+                label="Título de la pregunta"
+                value={this.state.dense_2}
+                // className={classNames(classes.textField, classes.dense)}
+                onChange={this.handleSubjectChange('dense_2')}
+                margin="dense"
+              />
+                <div class="form-option">
+              <FormControl className={classes.formControl}>
+                <NativeSelect
+                  value={this.state.type}
+                  onChange={this.handleChange_2('type')}
+                  name="type"
+                  // className={classes.selectEmpty}
+                >
+                  <option value="Text">Text</option>
+                  <option value="Slide">Slide</option>
+                </NativeSelect>
+                <FormHelperText>Tipo pregunta</FormHelperText>
+                </FormControl>
+                </div>
+
+
+
+              <Button variant="contained" color="primary" className={classes.button} onClick={this.handleNewQuestion} size="large">
+                  Enviar
+                  <CloudUploadIcon className={classes.rightIcon} />
+              </Button>
+              </div>
+            </div>
+          </Modal>
+
+          <Button variant="contained" color="primary" className={classes.button} onClick={this.handleOpen_2} size="large">
+              Añadir pregunta
+              <AddCircleIcon/>
+          </Button>
+          </div> : undefined
+
+          const enrollStudentButton = role === "ADMIN" ?
+          <div>
+            <Modal
+              aria-labelledby="simple-modal-title"
+              aria-describedby="simple-modal-description"
+              open={this.state.open_enroll}
+              onClose={this.handleClose_enroll}
+            >
+              <div style={getModalStyle()} className={classes.paper}>
+                <Typography variant="h6" id="modal-title">
+                  Matricular usuario
+                </Typography>
+
+
+                <FormControl component="fieldset" className={classes.formControl}>
+                  <FormLabel component="legend">No matriculados</FormLabel>
+                  <FormGroup>
+                  {
+                    this.state.intersection.map((user, i) => {
+                      console.log("USER =", user)
+                      return(<FormControlLabel key={i}
+                        control={
+                          <Checkbox checked={false} onChange={() => this.handleEnroll(user.id)} />
+                        }
+                        label = {user.email}
+                      />)
+                    })
+
+                  }
+
+                  </FormGroup>
+                  <FormHelperText>Be careful</FormHelperText>
+                </FormControl>
+
+
+
+
+
+                <FormControl component="fieldset" className={classes.formControl}>
+                  <FormLabel component="legend">Matriculados</FormLabel>
+                  <FormGroup>
+                  {
+                    this.state.difference.map((user, i) => {
+                      console.log("USER =", user)
+                      return(<FormControlLabel key={i}
+                        control={
+                          <Checkbox checked={false} onChange={() => this.handleChange_2(user.id)} />
+                        }
+                        label = {user.email}
+                      />)
+                    })
+
+                  }
+
+                  </FormGroup>
+                  <FormHelperText>Be careful</FormHelperText>
+                </FormControl>
+
+
+
+
+
+
+
+              </div>
+            </Modal>
+
+            <Button variant="contained" color="primary" className={classes.button} onClick={this.handleOpen_enroll} size="large">
+                Matricular usuario
+                <AddCircleIcon/>
+        
             </Button>
- 
-        const submitButton =
+            </div> : undefined
+
+
+        const submitButton = role === "USER" ?
             <Button variant="contained" color="primary" className={classes.button} onClick={this.handleSubmitQuestions} size="large">
                 Enviar
                 <CloudUploadIcon className={classes.rightIcon} />
-            </Button>
- 
+            </Button> : undefined
+
         const homeButton =
             <Button variant="contained" color="inherit" className={classes.button} onClick={this.handleHomeClicked} size="large">
                 Home
                 <HomeIcon className={classes.icon} />
             </Button>
- 
- 
- 
- 
+
+
+        const cancelButton = role === "USER" ?
+            <Button variant="contained" color="secondary" className={classes.button} onClick={this.handleDeleteClicked} size="large">
+                Borrar
+                <DeleteIcon className={classes.rightIcon} />
+            </Button> : undefined
+
+
+
         return (
             <div className={classes.root}>
                 <CssBaseline />
@@ -481,6 +911,7 @@ class VistaPrincipal extends React.Component {
                         <IconButton onClick={this.toggleDrawer('left', true)} className={classes.menuButton} color="inherit" aria-label="Menu">
                             <MenuIcon />
                         </IconButton>
+                        {add_subject_button}
                         <div class="bar-title"> eDOC</div>
                         <Button variant="contained"
                             color="success"
@@ -493,7 +924,7 @@ class VistaPrincipal extends React.Component {
                             {config.uiTexts.Settings.logout}
                         </Button>
                     </Toolbar>
- 
+
                 </AppBar>
                 <nav className={classes.drawer}>
                     <Hidden xsDown implementation="css">
@@ -509,98 +940,59 @@ class VistaPrincipal extends React.Component {
                 </nav>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
- 
+
                     {(() => {
-                        if (this.props.account.role === "Admin") {
+                        if (role === "ADMIN") {
                             return (
-                                <div id="header1" class="header">
-                                    <div class="container">
-                                        <div class="header-content row">
-                                            <div id="owl-demo" class="owl-carousel header1">
-                                                <div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 header-text">
-                                                        <h2 class="wow bounceIn animated" data-wow-delay=".40s">ADMIN <span>A</span> LA<br />APLICACIÓN DE eDOC</h2>
-                                                        <h3 class="wow bounceIn animated" data-wow-delay=".50s">REALIZA TUS EVALUACIONES </h3>
-                                                        <p class="wow bounceIn animated" data-wow-delay=".60s">Ten en cuenta que todas las evaluaciones son anónimas y cada persona solo puede evaluar cada asignatura una vez</p>
-                                                        <p>
-                                                            <div class="btn btn-primary btn-lg btn-ornge wow bounceIn animated" data-wow-delay="1s"><i class="hbtn"></i> <span><button onClick={this.toggleDrawer('left', true)}>Evaluar asignatura</button></span>
-                                                            </div>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <VistaAdmin
+                                    role={this.props.account.role}
+                                    toggleDrawer={this.toggleDrawer}
+                                />
                             )
-                        } else if (this.props.account.role === "User") {
+                        } else if (role === "USER") {
                             return (
-                                <div id="header1" class="header">
-                                    <div class="container">
-                                        <div class="header-content row">
-                                            <div id="owl-demo" class="owl-carousel header1">
-                                                <div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 header-text">
-                                                        <h2 class="wow bounceIn animated" data-wow-delay=".40s">BIENVENIDO <span>A</span> LA<br />APLICACIÓN DE eDOC</h2>
-                                                        <h3 class="wow bounceIn animated" data-wow-delay=".50s">REALIZA TUS EVALUACIONES </h3>
-                                                        <p class="wow bounceIn animated" data-wow-delay=".60s">Ten en cuenta que todas las evaluaciones son anónimas y cada persona solo puede evaluar cada asignatura una vez</p>
-                                                        <p>
-                                                            <div class="btn btn-primary btn-lg btn-ornge wow bounceIn animated" data-wow-delay="1s"><i class="hbtn"></i> <span><button onClick={this.toggleDrawer('left', true)}>Evaluar asignatura</button></span>
-                                                            </div>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <VistaUser
+                                    role={this.props.account.role}
+                                    toggleDrawer={this.toggleDrawer}
+                                />
                             )
-                        } else {
+                        } else if (role === "TEACHER") {
                             return (
-                                <div id="header1" class="header">
-                                    <div class="container">
-                                        <div class="header-content row">
-                                            <div id="owl-demo" class="owl-carousel header1">
-                                                <div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 header-text">
-                                                        <h2 class="wow bounceIn animated" data-wow-delay=".40s">BIENVENIDO <span>A</span> LA<br />APLICACIÓN DE eDOC</h2>
-                                                        <h3 class="wow bounceIn animated" data-wow-delay=".50s">REALIZA TUS EVALUACIONES </h3>
-                                                        <p class="wow bounceIn animated" data-wow-delay=".60s">Ten en cuenta que todas las evaluaciones son anónimas y cada persona solo puede evaluar cada asignatura una vez</p>
-                                                        <p>
-                                                            <div class="btn btn-primary btn-lg btn-ornge wow bounceIn animated" data-wow-delay="1s"><i class="hbtn"></i> <span><button onClick={this.toggleDrawer('left', true)}>Evaluar asignatura</button></span>
-                                                            </div>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <VistaTeacher
+                                    role={this.props.account.role}
+                                    toggleDrawer={this.toggleDrawer}
+                                />
                             )
                         }
                     })()}
- 
+
                     <div class="main-questions">
                         <div id="tituloBarra" class="subject-name"> eDOC</div>
                         <div id="preguntas" class="questions">
                             {questions}
                         </div>
                         <div class="botonesEncuestas1" id="botonesEncuestas">
+                            <div class="botonesEncuestas2">
+                          {addQuestionButton}
+                          {enrollStudentButton}
                             {submitButton}
                             {cancelButton}
                             {homeButton}
+                            </div>
                         </div>
- 
+
                     </div>
                 </main>
             </div>
         );
     }
- 
- 
+
+
 }
 VistaPrincipal.propTypes = {
     classes: PropTypes.object.isRequired,
 };
- 
+
+// const SimpleModalWrapped = withStyles(styles)(SimpleModal);
+
 export default withStyles(styles, { withTheme: true })(connect(mapStateToProps, mapDispatchToProps)(VistaPrincipal));
