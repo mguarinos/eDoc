@@ -60,6 +60,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return list;
     }
 
+    public List<User> findEnrolled(long subjectId) {
+        List<User> list = new ArrayList<>();
+        userDao.findAll().iterator().forEachRemaining(user -> {
+          user.getSubjects().forEach((v) -> {
+            if (v.getId() == subjectId) {
+              list.add(user);
+            }
+          });
+        });
+        return list;
+    }
+
     @Override
     public User findOne(String username) {
         return userDao.findByUsername(username);
@@ -80,12 +92,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         User user = userDao.findById(accountId);
         Subject subject = subjectDao.findSubjectById(subjectId);
 
-        System.out.println("USER =" + user.getUsername());
-        System.out.println("Subject =" + subject.getTitle());
-
         List<Subject> userSubjects = user.getSubjects();
         userSubjects.add(subject);
-
 
         return userDao.save(user);
     }

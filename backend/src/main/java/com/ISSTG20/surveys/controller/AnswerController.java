@@ -25,4 +25,10 @@ public class AnswerController {
         return answerService.save(answer, questionId);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'TEACHER')")
+    @RequestMapping(value="/{questionId}", method = RequestMethod.GET)
+    public List<Answer> getAnswers(@PathVariable long questionId){
+        return answerService.getAnswers(questionId);
+    }
+
 }

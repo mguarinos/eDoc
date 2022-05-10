@@ -16,7 +16,6 @@ public class Subject {
 
     // @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     @OneToMany(mappedBy = "subject", cascade = CascadeType.PERSIST)
-
     @JsonIgnore
     private List<Question> questions;
 

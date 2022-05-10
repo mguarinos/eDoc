@@ -22,6 +22,10 @@ public class User {
     @Column
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name = "subjectId")
+    @JsonIgnore
+    private Subject subject;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES",

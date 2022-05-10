@@ -1,7 +1,7 @@
 package com.ISSTG20.surveys.model;
 
 import javax.persistence.*;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Answer {
@@ -15,6 +15,7 @@ public class Answer {
 
     @ManyToOne
     @JoinColumn(name = "questionId")
+    @JsonIgnore
     private Question question;
 
     public long getId() {

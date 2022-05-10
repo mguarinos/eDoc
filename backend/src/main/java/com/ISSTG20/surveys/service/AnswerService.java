@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AnswerService {
     Answer save(AnswerDto answer, long questionId);
+    List<Answer> getAnswers(long questionId);
 }

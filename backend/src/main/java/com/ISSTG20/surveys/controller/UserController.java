@@ -56,12 +56,25 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value="/all", method = RequestMethod.GET)
+    public List<User> findAll(){
+        return userService.findAll();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value="/enrolled/{subjectId}", method = RequestMethod.GET)
+    public List<User> findEnrolled(@PathVariable long subjectId){
+        // System.out.println("WE GET HERE");
+        return userService.findEnrolled(subjectId);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value="/enroll/{subjectId}/{accountId}", method = RequestMethod.POST)
     public User enroll(@PathVariable long subjectId, @PathVariable long accountId){
         return userService.enroll(subjectId, accountId);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'TEACHER')")
     @RequestMapping(value="/getuser", method = RequestMethod.GET)
     public User getUser(){
         return userService.getUser();

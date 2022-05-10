@@ -26,6 +26,14 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
 
+// --------
+    @ElementCollection
+    @CollectionTable(name = "users_already_answered", joinColumns = @JoinColumn(name = "question_id"))
+    @Column(name = "user_id")
+    @JsonIgnore
+    private List<Long> usersAlreadyAnswered;
+// --------
+
     public long getId() {
         return id;
     }
@@ -56,6 +64,22 @@ public class Question {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
+    public List<Long> getUsersAlreadyAnswered() {
+        return usersAlreadyAnswered;
+    }
+
+    public void setUsersAlreadyAnswered(List<Long> usersAlreadyAnswered) {
+        this.usersAlreadyAnswered = usersAlreadyAnswered;
     }
 
 }

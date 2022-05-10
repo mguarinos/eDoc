@@ -24,11 +24,12 @@ public class SubjectController {
         return subjectService.save(subject);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'TEACHER')")
     @RequestMapping(value="/", method = RequestMethod.GET)
     public List<Subject> getSubjects(){
         return subjectService.getSubjects();
     }
+
 
 
 

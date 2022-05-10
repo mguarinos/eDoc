@@ -1,10 +1,12 @@
 package com.ISSTG20.surveys.service.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 import com.ISSTG20.surveys.model.User;
 import com.ISSTG20.surveys.model.UserDto;
 import com.ISSTG20.surveys.service.SubjectService;
 import com.ISSTG20.surveys.service.QuestionService;
+import com.ISSTG20.surveys.service.UserService;
 import com.ISSTG20.surveys.model.Subject;
 import com.ISSTG20.surveys.dao.QuestionDao;
 import com.ISSTG20.surveys.dao.SubjectDao;
@@ -28,6 +30,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Question findById(long id) {
         Question question = questionDao.findQuestionById(id);
@@ -47,7 +52,22 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<Question> getQuestions(long subjectId) {
         Subject subject = subjectDao.findSubjectById(subjectId);
-        return subject.getQuestions();
-    }
+        List<Question> questions = subject.getQuestions();
+        List<Question> unansweredQuestions = new ArrayList<Question>();
 
+        for (Question question : questions) {
+          boolean duplicated = false;
+
+          System.out.println("getUsersAlreadyAnswered = " + question.getUsersAlreadyAnswered().toString());
+
+          for (Long userId : question.getUsersAlreadyAnswered())
+            if (userId == userService.getUser().getId())
+              duplicated = true;
+
+          if (!duplicated)
+            unansweredQuestions.add(question);
+        }
+
+        return unansweredQuestions;
+    }
 }

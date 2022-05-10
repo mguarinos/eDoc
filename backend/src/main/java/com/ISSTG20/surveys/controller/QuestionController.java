@@ -22,8 +22,8 @@ public class QuestionController {
     public Question saveQuestion(@RequestBody QuestionDto question, @PathVariable long subjectId){
         return questionService.save(question, subjectId);
     }
-    
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'TEACHER')")
     @RequestMapping(value="/{subjectId}", method = RequestMethod.GET)
     public List<Question> getQuestions(@PathVariable long subjectId){
         return questionService.getQuestions(subjectId);
